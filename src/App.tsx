@@ -1,26 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import TodoList from './components/TodoList';
+import TodoAddForm from './components/TodoAddForm';
 import './App.css';
 
-function App() {
+interface Todo {
+  id: number;
+  text: string;
+}
+
+const App: React.FC = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  const handleAddTodo = (text: string) => {
+    const newTodo: Todo = {
+      id: Math.floor(Math.random() * 1000),
+      text: text,
+    };
+    setTodos([...todos, newTodo]);
+  };
+
+  const handleDeleteTodo = (id: number) => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
+
+  const handleUpdateTodo = (id: number, newText: string) => {
+    setTodos(todos.map(todo => (todo.id === id ? { ...todo, text: newText } : todo)));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='Container'>
+      <TodoAddForm onAdd={handleAddTodo} />
+      <TodoList todos={todos} onDelete={handleDeleteTodo} onUpdate={handleUpdateTodo} />
     </div>
   );
-}
+};
 
 export default App;
